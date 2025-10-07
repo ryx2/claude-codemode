@@ -121,7 +121,13 @@ Or install from source:
 ```bash
 git clone https://github.com/yourusername/claude-codemode.git
 cd claude-codemode
+
+# Using pip
 pip install -e ".[all]"
+
+# Or using poetry (recommended for development)
+poetry install --extras pydantic-ai
+# Then run examples with: poetry run python examples/basic_example.py
 ```
 
 ### Prerequisites
