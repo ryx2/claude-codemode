@@ -41,15 +41,15 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Your Application                         │
 │                                                                  │
-│  agent = Agent('claude-sonnet-4-5-20250929')                   │
+│  agent = Agent('claude-sonnet-4-5-20250929')                    │
 │                                                                  │
-│  @agent.tool                                                    │
-│  def search_docs(query: str) -> str: ...                       │
+│  @agent.tool                                                     │
+│  def search_docs(query: str) -> str: ...                        │
 │                                                                  │
-│  @agent.tool                                                    │
-│  def analyze_code(code: str) -> dict: ...                      │
+│  @agent.tool                                                     │
+│  def analyze_code(code: str) -> dict: ...                       │
 │                                                                  │
-│  result = agent.codemode("Search docs and analyze examples")   │
+│  result = agent.codemode("Search docs and analyze examples")    │
 │             │                                                    │
 └─────────────┼────────────────────────────────────────────────────┘
               │
@@ -80,25 +80,25 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Claude Code                               │
 │                                                                  │
-│  Instructions:                                                  │
-│  "Implement the main() function to accomplish the task.        │
-│   Use the provided tools by writing Python code."              │
+│  Instructions:                                                   │
+│  "Implement the main() function to accomplish the task.         │
+│   Use the provided tools by writing Python code."               │
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────┐    │
-│  │ Claude reads agentRunner.py                           │    │
-│  │ Claude writes implementation:                         │    │
-│  │                                                        │    │
-│  │ def main():                                           │    │
-│  │     # Search documentation                           │    │
-│  │     results = search_docs("authentication")          │    │
-│  │                                                       │    │
-│  │     # Extract code examples                          │    │
-│  │     examples = extract_examples(results)             │    │
-│  │                                                       │    │
-│  │     # Analyze each example                           │    │
-│  │     analyses = [analyze_code(ex) for ex in examples] │    │
-│  │                                                       │    │
-│  │     return {"results": results, "analyses": analyses}│    │
+│  │ Claude reads agentRunner.py                            │    │
+│  │ Claude writes implementation:                          │    │
+│  │                                                         │    │
+│  │ def main():                                            │    │
+│  │     # Search documentation                             │    │
+│  │     results = search_docs("authentication")            │    │
+│  │                                                         │    │
+│  │     # Extract code examples                            │    │
+│  │     examples = extract_examples(results)               │    │
+│  │                                                         │    │
+│  │     # Analyze each example                             │    │
+│  │     analyses = [analyze_code(ex) for ex in examples]   │    │
+│  │                                                         │    │
+│  │     return {"results": results, "analyses": analyses}  │    │
 │  └────────────────────────────────────────────────────────┘    │
 │                          │                                       │
 │                          │ 4. Execute agentRunner.py            │
@@ -113,11 +113,11 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 ┌─────────────────────────────────────────────────────────────────┐
 │                      CodeModeResult                              │
 │                                                                  │
-│  {                                                              │
-│    "output": {...},                                            │
-│    "success": true,                                            │
-│    "execution_log": "..."                                      │
-│  }                                                              │
+│  {                                                               │
+│    "output": {...},                                              │
+│    "success": true,                                              │
+│    "execution_log": "..."                                        │
+│  }                                                               │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
