@@ -39,85 +39,85 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Your Application                         │
-│                                                                  │
+│                         Your Application                        │
+│                                                                 │
 │  agent = Agent('claude-sonnet-4-5-20250929')                    │
-│                                                                  │
-│  @agent.tool                                                     │
+│                                                                 │
+│  @agent.tool                                                    │
 │  def search_docs(query: str) -> str: ...                        │
-│                                                                  │
-│  @agent.tool                                                     │
+│                                                                 │
+│  @agent.tool                                                    │
 │  def analyze_code(code: str) -> dict: ...                       │
-│                                                                  │
+│                                                                 │
 │  result = agent.codemode("Search docs and analyze examples")    │
-│             │                                                    │
-└─────────────┼────────────────────────────────────────────────────┘
+│             │                                                   │
+└─────────────┼───────────────────────────────────────────────────┘
               │
               │ 1. Extract tools from agent
               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      Claude Codemode                             │
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │  2. Generate agentRunner.py with tool definitions       │  │
-│  │                                                          │  │
-│  │  def search_docs(query: str) -> str:                    │  │
-│  │      """Search documentation."""                        │  │
-│  │      # ... implementation ...                           │  │
-│  │                                                          │  │
-│  │  def analyze_code(code: str) -> dict:                   │  │
-│  │      """Analyze code for issues."""                     │  │
-│  │      # ... implementation ...                           │  │
-│  │                                                          │  │
-│  │  def main():                                            │  │
-│  │      # TODO: Implement task using above tools          │  │
-│  │      pass                                               │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                          │                                       │
-└──────────────────────────┼───────────────────────────────────────┘
+│                      Claude Codemode                            │
+│                                                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  2. Generate agentRunner.py with tool definitions        │   │
+│  │                                                          │   │
+│  │  def search_docs(query: str) -> str:                     │   │
+│  │      """Search documentation."""                         │   │
+│  │      # ... implementation ...                            │   │
+│  │                                                          │   │
+│  │  def analyze_code(code: str) -> dict:                    │   │
+│  │      """Analyze code for issues."""                      │   │
+│  │      # ... implementation ...                            │   │
+│  │                                                          │   │
+│  │  def main():                                             │   │
+│  │      # TODO: Implement task using above tools            │   │
+│  │      pass                                                │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                          │                                      │
+└──────────────────────────┼──────────────────────────────────────┘
                            │ 3. Spawn Claude Code
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Claude Code                               │
-│                                                                  │
-│  Instructions:                                                   │
+│                        Claude Code                              │
+│                                                                 │
+│  Instructions:                                                  │
 │  "Implement the main() function to accomplish the task.         │
 │   Use the provided tools by writing Python code."               │
-│                                                                  │
-│  ┌────────────────────────────────────────────────────────┐    │
-│  │ Claude reads agentRunner.py                            │    │
-│  │ Claude writes implementation:                          │    │
-│  │                                                         │    │
-│  │ def main():                                            │    │
-│  │     # Search documentation                             │    │
-│  │     results = search_docs("authentication")            │    │
-│  │                                                         │    │
-│  │     # Extract code examples                            │    │
-│  │     examples = extract_examples(results)               │    │
-│  │                                                         │    │
-│  │     # Analyze each example                             │    │
-│  │     analyses = [analyze_code(ex) for ex in examples]   │    │
-│  │                                                         │    │
-│  │     return {"results": results, "analyses": analyses}  │    │
-│  └────────────────────────────────────────────────────────┘    │
-│                          │                                       │
+│                                                                 │
+│  ┌────────────────────────────────────────────────────────┐     │
+│  │ Claude reads agentRunner.py                            │     │
+│  │ Claude writes implementation:                          │     │
+│  │                                                        │     │
+│  │ def main():                                            │     │
+│  │     # Search documentation                             │     │
+│  │     results = search_docs("authentication")            │     │
+│  │                                                        │     │
+│  │     # Extract code examples                            │     │
+│  │     examples = extract_examples(results)               │     │
+│  │                                                        │     │
+│  │     # Analyze each example                             │     │
+│  │     analyses = [analyze_code(ex) for ex in examples]   │     │
+│  │                                                        │     │
+│  │     return {"results": results, "analyses": analyses}  │     │
+│  └────────────────────────────────────────────────────────┘     │
+│                          │                                      │
 │                          │ 4. Execute agentRunner.py            │
-│                          ▼                                       │
-│              ┌─────────────────────┐                            │
+│                          ▼                                      │
+│              ┌────────────────────────┐                         │
 │              │  python agentRunner.py │                         │
-│              └─────────────────────┘                            │
-│                          │                                       │
-└──────────────────────────┼───────────────────────────────────────┘
+│              └────────────────────────┘                         │
+│                          │                                      │
+└──────────────────────────┼──────────────────────────────────────┘
                            │ 5. Return result
                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                      CodeModeResult                              │
-│                                                                  │
-│  {                                                               │
-│    "output": {...},                                              │
-│    "success": true,                                              │
-│    "execution_log": "..."                                        │
-│  }                                                               │
+│                      CodeModeResult                             │
+│                                                                 │
+│  {                                                              │
+│    "output": {...},                                             │
+│    "success": true,                                             │
+│    "execution_log": "..."                                       │
+│  }                                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
