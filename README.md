@@ -15,6 +15,26 @@ Code Mode solves this by:
 - ✅ Leveraging Claude's extensive Python training data
 - ✅ Providing better error handling and debugging
 
+### Why Code Mode Works Better
+
+**Traditional Tool Calling:**
+```
+LLM → Tool Call → MCP Server → Result → LLM → Tool Call → ...
+```
+- ❌ LLMs struggle with tool syntax
+- ❌ Each call goes through the neural network
+- ❌ Hard to chain operations
+- ❌ Limited by training on synthetic tool examples
+
+**Code Mode:**
+```
+LLM → Write Code → Code calls tools → Tools execute → Results
+```
+- ✅ LLMs excel at writing code (millions of real examples in training)
+- ✅ Code can chain operations naturally
+- ✅ Results flow through code logic, not neural network
+- ✅ Natural composition and data processing
+
 ## How It Works
 
 ```
