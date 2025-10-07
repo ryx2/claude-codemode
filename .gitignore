@@ -75,6 +75,9 @@ dmypy.json
 # Ruff
 .ruff_cache/
 
+# Poetry
+poetry.lock
+
 # Claude Codemode temporary files
 .codemode_temp/
 agentRunner_*.py
