@@ -2,38 +2,21 @@
 
 A Python implementation of [Cloudflare's Code Mode](https://blog.cloudflare.com/code-mode/), enabling AI agents to write code that calls tools instead of directly invoking them. Built on [pydantic-ai](https://ai.pydantic.dev) and Claude AI.
 
-## Why Code Mode?
+## What is Code Mode
 
-Traditional tool calling has limitations because LLMs have minimal training on tool invocation. **LLMs are better at writing code to call tools than at calling tools directly.**
+**Traditional Tool Calling Agents:**
 
-As Cloudflare eloquently put it:
-> "Making an LLM perform tasks with tool calling is like putting Shakespeare through a month-long class in Mandarin and then asking him to write a play in it."
+Input → LLM → loop(Tool Call → Execute Tool → Result → LLM) → output
 
-Code Mode solves this by:
-- ✅ Letting Claude write Python code that calls your tools
-- ✅ Handling complex multi-step workflows naturally
-- ✅ Leveraging Claude's extensive Python training data
-- ✅ Providing better error handling and debugging
+**Code Mode Agent:**
 
-### Why Code Mode Works Better
+Input → loop(Claude Codes w/ access to your tools) → Execute Code → output
 
-**Traditional Tool Calling:**
-```
-LLM → Tool Call → MCP Server → Result → LLM → Tool Call → ...
-```
-- ❌ LLMs struggle with tool syntax
-- ❌ Each call goes through the neural network
-- ❌ Hard to chain operations
-- ❌ Limited by training on synthetic tool examples
+## Why it's better
 
-**Code Mode:**
-```
-LLM → Write Code → Code calls tools → Tools execute → Results
-```
-- ✅ LLMs excel at writing code (millions of real examples in training)
-- ✅ Code can chain operations naturally
-- ✅ Results flow through code logic, not neural network
-- ✅ Natural composition and data processing
+Each time tool output is passed to the LLM, and output is introduced, it leaves some possibility of mistake. As the number of iterations your agent does *n* increases, the better Code Mode gets compared to traditional iterative tool calling agents.
+
+LLMs are better at generating code files & verifying & running that code they generate than calling tools to create output.
 
 ## How It Works
 
@@ -484,6 +467,13 @@ Contributions welcome! Please feel free to submit a Pull Request.
 ## License
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+
+## Inspirations
+
+- [Cloudflare's blog post](https://blog.cloudflare.com/code-mode/) introducing the code mode concept
+- [Theo's t3 chat video](https://youtu.be/bAYZjVAodoo?si=ouW-gfrrBsaz5LSj) for making me aware of this approach
+- [Early MCP implementation](https://github.com/jx-codes/codemode-mcp) by jx-codes
 
 ## Acknowledgments
 

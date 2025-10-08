@@ -48,9 +48,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/claude-codemode"
-Documentation = "https://github.com/yourusername/claude-codemode#readme"
-Repository = "https://github.com/yourusername/claude-codemode"
+Homepage = "https://github.com/ryx2/claude-codemode"
+Documentation = "https://github.com/ryx2/claude-codemode#readme"
+Repository = "https://github.com/ryx2/claude-codemode"
 
 [tool.setuptools.packages.find]
 include = ["claude_codemode*"]
