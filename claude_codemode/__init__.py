@@ -61,7 +61,7 @@ Alternative usage with monkey-patched method:
 from .core import CodeMode, codemode
 from .types import CodeModeConfig, CodeModeResult
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 __all__ = [
     "CodeMode",
