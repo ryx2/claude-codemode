@@ -44,12 +44,15 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 │  agent = Agent('claude-sonnet-4-5-20250929')                    │
 │                                                                 │
 │  @agent.tool                                                    │
-│  def search_docs(query: str) -> str: ...                        │
+│  def search_docs(query: str) -> list[database_rows]: ...        │
 │                                                                 │
 │  @agent.tool                                                    │
-│  def analyze_code(code: str) -> dict: ...                       │
+│  def analyze_blueprints(file_location: str) -> dict: ...        │
 │                                                                 │
-│  result = agent.codemode("Search docs and analyze examples")    │
+│  @agent.tool                                                    │
+│  def report_blueprint(pdf_location: str) -> None: ...           │
+│                                                                 │
+│  result = agent.codemode("verify structural integrity")         │
 │             │                                                   │
 └─────────────┼───────────────────────────────────────────────────┘
               │
@@ -61,16 +64,20 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │  2. Generate agentRunner.py with tool definitions        │   │
 │  │                                                          │   │
-│  │  def search_docs(query: str) -> str:                     │   │
-│  │      """Search documentation."""                         │   │
-│  │      # ... implementation ...                            │   │
+│  │  def search_docs(query: str) -> list[database_rows]:     │   │
+│  │      """Search documentation, returns database rows."""  │   │
+│  │      "... implementation ..."                            │   │
 │  │                                                          │   │
-│  │  def analyze_code(code: str) -> dict:                    │   │
-│  │      """Analyze code for issues."""                      │   │
-│  │      # ... implementation ...                            │   │
+│  │  def analyze_blueprints(file_location: str) -> dict:     │   │
+│  │      """Analyze blueprints for issues."""                │   │
+│  │      "... implementation ..."                            │   │
 │  │                                                          │   │
-│  │  def main():                                             │   │
-│  │      # TODO: Implement task using above tools            │   │
+│  │  def report_blueprint(pdf_location: str) -> None:        │   │
+│  │      """Report a blueprint for failing standards."""     │   │
+│  │      "... implementation ..."                            │   │
+│  │                                                          │   │
+│  │  def main(params: str = "verify structural integrity")   │   │
+│  │      "TODO: Implement task using above tools"            │   │
 │  │      pass                                                │   │
 │  └──────────────────────────────────────────────────────────┘   │
 │                          │                                      │
@@ -88,17 +95,24 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 │  │ Claude reads agentRunner.py                            │     │
 │  │ Claude writes implementation:                          │     │
 │  │                                                        │     │
+│  │ def find_database_files_on_disk(database_row):         │     │
+│  │     "Claude wrote this helper function!"               │     │
+│  │     return database_row['file'].download().path        │     │
+│  │                                                        │     │
 │  │ def main():                                            │     │
-│  │     # Search documentation                             │     │
-│  │     results = search_docs("authentication")            │     │
+│  │     "Search docs - returns database rows"              │     │
+│  │     database_rows = search_docs("structural integrity")│     │
 │  │                                                        │     │
-│  │     # Extract code examples                            │     │
-│  │     examples = extract_examples(results)               │     │
+│  │     "Analyze each blueprint and report failures"       │     │
+│  │     analyses = []                                      │     │
+│  │     for row in database_rows:                          │     │
+│  │         file_path = find_database_files_on_disk(row)   │     │
+│  │         result = analyze_blueprints(file_path)         │     │
+│  │         analyses.append(result)                        │     │
+│  │         if not result.passes:                          │     │
+│  │             report_blueprint(file_path)                │     │
 │  │                                                        │     │
-│  │     # Analyze each example                             │     │
-│  │     analyses = [analyze_code(ex) for ex in examples]   │     │
-│  │                                                        │     │
-│  │     return {"results": results, "analyses": analyses}  │     │
+│  │     return {"analyses": analyses}                      │     │
 │  └────────────────────────────────────────────────────────┘     │
 │                          │                                      │
 │                          │ 4. Execute agentRunner.py            │
@@ -120,6 +134,14 @@ LLM → Write Code → Code calls tools → Tools execute → Results
 │  }                                                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
+
+### More Specifically Why It's Better
+
+This problem has a lot of elements of what an agent excels at: some ambiguity, needing to integrate pieces together, formatting a nice output.
+
+As the amount of functions needed to be called by the agents becomes very large, then the amount of advantage that the Code Mode Agent has keeps increasing. The best LLM agents today can call tools in parallel, but it's difficult for them to call > 10 tools in parallel. They can call tools in serially, but after 20 iterations, they lose track of where they are even with a todo list. 
+
+With Code Mode Agent, you can call an essentially unlimited amount of functions provided to you by the original agent definition, without waiting for a ridiculous number of agent iterations because of for serial or parallel limitations of agents.  
 
 ## Installation
 
