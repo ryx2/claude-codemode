@@ -144,7 +144,7 @@ pip install claude-codemode[all]
 Or install from source:
 
 ```bash
-git clone https://github.com/yourusername/claude-codemode.git
+git clone https://github.com/ryx2/claude-codemode.git
 cd claude-codemode
 
 # Using pip
