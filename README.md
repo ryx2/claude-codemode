@@ -122,6 +122,8 @@ LLMs are better at generating code files & verifying & running that code they ge
 
 This problem has a lot of elements of what an agent excels at: some ambiguity, needing to integrate pieces together, formatting a nice output.
 
+I tried to also exemplify claude code's ability to figure out how to piece any two pieces of software together on the fly, it figures out here how to grab `database_row['file'].download().path` and puts that in a function. This is something that I feel like is more likely to be figured out by claude code rather than any other way to make a tool that would try to do the same.
+
 As the amount of functions needed to be called by the agents becomes very large, then the amount of advantage that the Code Mode Agent has keeps increasing. The best LLM agents today can call tools in parallel, but it's difficult for them to call > 10 tools in parallel. They can call tools in serially, but after 20 iterations, they lose track of where they are even with a todo list. 
 
 With Code Mode Agent, you can call an essentially unlimited amount of functions provided to you by the original agent definition, without waiting for a ridiculous number of agent iterations because of for serial or parallel limitations of agents.  
