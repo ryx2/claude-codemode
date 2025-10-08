@@ -2,13 +2,13 @@
 
 A Python implementation of [Cloudflare's Code Mode](https://blog.cloudflare.com/code-mode/), enabling AI agents to write code that calls tools instead of directly invoking them. Built on [pydantic-ai](https://ai.pydantic.dev) and Claude AI.
 
-## What is Code Mode
+## What is Claude Code Mode
 
 **Traditional Tool Calling Agents:**
 
 Input → LLM → loop(Tool Call → Execute Tool → Result → LLM) → output
 
-**Code Mode Agent:**
+**Claude Code Mode Agent:**
 
 Input → loop(Claude Codes w/ access to your tools) → Execute Code → output
 
