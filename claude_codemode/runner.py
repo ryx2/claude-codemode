@@ -64,11 +64,12 @@ class ClaudeCodeRunner:
         message_file.write_text(instructions)
 
         # Build Claude Code command
-        # We'll use the chat command with a file input
+        # Use --print for non-interactive mode
+        # Use --dangerously-skip-permissions to bypass file edit permissions
         cmd = [
             self.config.claude_code_path,
-            "chat",
-            "--message",
+            "--print",
+            "--dangerously-skip-permissions",
             instructions,
         ]
 

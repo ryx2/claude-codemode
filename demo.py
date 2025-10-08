@@ -1,30 +1,41 @@
 """
 Demonstration of Claude Codemode library.
 
-This shows the core functionality:
-1. Extract tools from an agent
-2. Generate agentRunner.py template
-3. Show what would be sent to Claude Code
+This shows the FULL end-to-end workflow:
+1. Create an agent with tools
+2. Run codemode() to spawn Claude Code
+3. Claude Code implements the task using the tools
+4. Execute and return the result
 """
 
 import sys
 sys.path.insert(0, '.')
 
-from claude_codemode.template import TemplateGenerator
-from claude_codemode.types import ToolDefinition
-from claude_codemode.converter import ToolConverter
-import inspect
+try:
+    from pydantic_ai import Agent
+    from claude_codemode import codemode, CodeModeConfig
+    PYDANTIC_AI_AVAILABLE = True
+except ImportError:
+    PYDANTIC_AI_AVAILABLE = False
+    print("Error: pydantic-ai not installed.")
+    print("Install with: pip install 'claude-codemode[pydantic-ai]'")
+    sys.exit(1)
 
 
 print("=" * 80)
-print("Claude Codemode - Demo")
+print("Claude Codemode - Live Demo")
 print("=" * 80)
 print()
 print("This library implements Cloudflare's Code Mode for Python.")
 print("Instead of directly calling tools, Claude writes Python code that calls them.")
 print()
 
-# Create simple mock tools
+# Create an agent with tools
+print("Step 1: Create agent with tools")
+print("-" * 80)
+agent = Agent('claude-sonnet-4-5-20250929')
+
+@agent.tool_plain
 def get_weather(city: str) -> str:
     """Get the weather for a given city.
 
@@ -43,6 +54,7 @@ def get_weather(city: str) -> str:
     return weather_data.get(city, f"Weather data not available for {city}")
 
 
+@agent.tool_plain
 def calculate_temperature_difference(temp1: str, temp2: str) -> str:
     """Calculate the difference between two temperatures.
 
@@ -62,73 +74,68 @@ def calculate_temperature_difference(temp1: str, temp2: str) -> str:
     return "Unable to calculate difference"
 
 
-# Create tool definitions
-print("Step 1: Define tools")
-print("-" * 80)
-tools = [
-    ToolDefinition(
-        name="get_weather",
-        function=get_weather,
-        description=inspect.getdoc(get_weather),
-        parameters=dict(inspect.signature(get_weather).parameters),
-        return_annotation=inspect.signature(get_weather).return_annotation
-    ),
-    ToolDefinition(
-        name="calculate_temperature_difference",
-        function=calculate_temperature_difference,
-        description=inspect.getdoc(calculate_temperature_difference),
-        parameters=dict(inspect.signature(calculate_temperature_difference).parameters),
-        return_annotation=inspect.signature(calculate_temperature_difference).return_annotation
-    )
-]
-
-for tool in tools:
-    print(f"  ✓ {tool.name}")
+print(f"  ✓ Created agent with 2 tools:")
+print(f"    - get_weather(city)")
+print(f"    - calculate_temperature_difference(temp1, temp2)")
 print()
 
-# Generate the agentRunner.py template
-print("Step 2: Generate agentRunner.py template")
+# Define the task
+print("Step 2: Define the task")
 print("-" * 80)
-template_gen = TemplateGenerator()
 prompt = "Compare the weather between San Francisco and New York, and tell me the temperature difference."
-runner_code = template_gen.generate_runner(prompt, tools, deps=None)
-print(f"  ✓ Generated {len(runner_code)} characters of Python code")
+print(f'  Task: "{prompt}"')
 print()
 
-print("Step 3: What gets sent to Claude Code")
+# Configure codemode
+print("Step 3: Running codemode...")
 print("-" * 80)
-print("The agentRunner.py file contains:")
-print("  • Tool definitions (as Python functions)")
-print("  • The task prompt")
-print("  • A main() function stub for Claude to implement")
-print()
-print("Claude Code is instructed:")
-print('  "Implement the main() function using the tools provided"')
+print("This will:")
+print("  1. Extract tools from the agent")
+print("  2. Generate agentRunner.py with tool definitions")
+print("  3. Spawn Claude Code to implement main() function")
+print("  4. Execute the implementation and return result")
 print()
 
-print("Step 4: Preview of generated agentRunner.py")
+config = CodeModeConfig(
+    verbose=True,
+    preserve_workspace=True,
+    timeout=120,
+)
+
+# Actually run codemode!
+print("Executing codemode (this will spawn Claude Code)...")
 print("-" * 80)
-# Show first part of the generated code
-lines = runner_code.split('\n')
-preview_lines = 40
-print('\n'.join(lines[:preview_lines]))
-print(f"\n... ({len(lines)} total lines) ...")
-print()
+result = codemode(agent, prompt, config=config)
 
+# Show results
+print()
 print("=" * 80)
-print("✅ Demo Complete!")
+print("Step 4: Results")
+print("=" * 80)
+
+if result.success:
+    print("✅ SUCCESS!")
+    print()
+    print(f"Output: {result.output}")
+else:
+    print("❌ FAILED")
+    print()
+    print(f"Error: {result.error}")
+
+print()
+print("-" * 80)
+print("Execution Log:")
+print("-" * 80)
+print(result.execution_log)
+
+print()
+print("=" * 80)
+print("Demo Complete!")
 print("=" * 80)
 print()
-print("Key Points:")
-print("  1. Tools are converted to Python function definitions")
-print("  2. Claude Code sees them as regular Python code (not tool calling)")
-print("  3. Claude writes Python that calls these functions naturally")
-print("  4. Result is executed and returned")
-print()
-print("This leverages Claude's extensive Python training data instead of")
-print("limited tool-calling training, resulting in better complex workflows!")
-print()
-print("To use with real agents:")
-print("  • pydantic-ai: result = agent.codemode('your task here')")
-print("  • Claude SDK: result = await client.codemode('your task here')")
+print("Key Takeaways:")
+print("  ✓ Claude wrote Python code to call the tools (not direct tool calling)")
+print("  ✓ Code naturally handled the multi-step workflow")
+print("  ✓ This leverages Claude's extensive Python training data")
+print("  ✓ More reliable than traditional tool calling for complex tasks")
 print()

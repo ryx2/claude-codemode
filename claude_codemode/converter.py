@@ -20,8 +20,23 @@ class ToolConverter:
         """
         tools = []
 
-        # Check if this is a pydantic-ai agent
-        if hasattr(agent, '_function_tools'):
+        # Check if this is a pydantic-ai agent (v1.0+)
+        if hasattr(agent, '_function_toolset') and hasattr(agent._function_toolset, 'tools'):
+            for tool in agent._function_toolset.tools.values():
+                func = tool.function
+                sig = inspect.signature(func)
+
+                tool_def = ToolDefinition(
+                    name=tool.name or func.__name__,
+                    function=func,
+                    description=tool.description or inspect.getdoc(func),
+                    parameters=dict(sig.parameters),
+                    return_annotation=sig.return_annotation
+                )
+                tools.append(tool_def)
+
+        # Check if this is an older pydantic-ai agent
+        elif hasattr(agent, '_function_tools'):
             for tool in agent._function_tools.values():
                 func = tool.function
                 sig = inspect.signature(func)
